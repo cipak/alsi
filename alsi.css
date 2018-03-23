@@ -1,0 +1,131 @@
+body {
+	display: flex;
+	flex-direction: column;
+	margin: 0;
+	padding: 0;
+}
+
+.controls {
+	padding: 8px 8px 16px 8px;
+	font-size: 120%;
+}
+
+.logo {
+	font-family: "Comic Sans MS", cursive, sans-serif;
+	font-size: 30px;
+}
+
+.aggs {
+	flex: 1;
+	display: flex;
+	overflow: auto;
+	padding: 16px 8px 8px 8px;
+	border-top: 1px solid gray;
+}
+
+.aggs > :not(:last-child) {
+	margin-right: 40px;
+}
+
+.envs > div {
+	padding: 4px 0;
+	font-family: monospace;
+}
+
+.no-dif {
+	background-color: #cfc;
+}
+
+.negative-dif {
+	background-color: #f99;
+}
+
+.positive-dif {
+	background-color: lightblue;
+}
+
+
+.bg-negative {
+	background-color: #f99;
+}
+
+.bg-positive {
+	background-color: lightblue;
+}
+
+.bg-equal {
+	background-color: #cfc;
+}
+
+
+table {
+	border-collapse: collapse;
+}
+
+td, th {
+	padding: 1px 4px;
+	border: 1px solid gray;
+	font-family: monospace;
+	white-space: nowrap;
+}
+
+th {
+	background-color: #3468b1;
+	color: white;
+	padding: 2px 4px;
+}
+
+td:nth-child(n+2) {
+	text-align: right;
+}
+
+h4 {
+	margin: 0;
+}
+
+.row {
+	display: flex;
+	align-items: center;
+}
+
+.row > *:not(:first-child) {
+	margin-left: 20px;
+}
+
+.top-margin {
+	margin-top: 21px;
+}
+
+.left-margin {
+	margin-left: 20px;
+}
+
+.hidden {
+	display: none;
+}
+
+.status {
+	border-radius: 3px;
+	background-color: gray;
+	color: white;
+}
+
+.status.ok {
+	background-color: green;
+}
+
+.status.loading {
+	background-color: orange;
+}
+
+.status.error {
+	background-color: #f99;
+	color: black;
+}
+
+input[type="file"] {
+    width: 25em;
+    font-family: monospace;
+    background-color: #ddf;
+    border: 1px solid gray;
+}

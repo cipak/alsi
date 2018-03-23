@@ -1,0 +1,52 @@
+<!doctype>
+<html>
+
+<head>
+	<title>ALSI HB Compare</title>
+	<link rel="stylesheet" href="alsi.css"></link>
+</head>
+
+<body>
+<div class="controls">
+	<div class="row">
+		<div class="logo">COMPARE</div>
+		<div class="envs">
+			<div>
+				Old Env:
+				<select id="env1" onchange="setenv(1)"></select>
+				<input id="file1" type="file" onchange="upload(1)" class="hidden">
+				<span id="status1" class="status"></span>
+				<button id="save1" class="hidden left-margin" onclick="saveFile(1)">Save file...</button>
+			</div>
+
+			<div>
+				New Env:
+				<select id="env2" onchange="setenv(2)"></select>
+				<input id="file2" type="file" onchange="upload(2)" class="hidden">
+				<span id="status2" class="status"></span>
+				<button id="save2" class="hidden left-margin" onclick="saveFile(2)">Save file...</button>
+			</div>
+		</div>
+
+		<span id="status4" class="status"></span>
+		<button onclick="refresh(1);refresh(2)" class="hidden" id="refresh_button">&#x21bb; Refresh</button>
+	</div>
+
+	<div id="actions" class="top-margin hidden">
+		<button onclick="showENP(1, 0, 0)" class="bg-equal">Show only equal: <span id="num_eq"/></button>
+		<button onclick="showENP(false, true, false)" class="bg-negative">Show only missing: <span id="num_neg"/></button>
+		<button onclick="showENP(false, false, true)" class="bg-positive">Show only new: <span id="num_pos"/></button>
+		<button onclick="showENP(false, true, true)">Show all diffs (<span class="bg-negative">missing</span>+<span class="bg-positive">new</span>): <span id="num_dif"/></button>
+		<button onclick="showENP(true, true, true)" id="hideEqBut">Show everything: <span id="num_all"/></button>
+	</div>
+
+	<span id="status3" class="status"></span>
+</div>
+
+<div id="aggs" class="aggs"></div>
+
+<script src="lodash.core.js"></script>
+<script src="config.js"></script>
+<script src="alsi.js"></script>
+</body>
+
