@@ -1,4 +1,5 @@
 const UPLOAD_FILE = 'Upload file...';
+const LOCAL_URL = 'Local url...';
 let AGGS = {1: null, 2: null};
 let PROMISES = {1: null, 2: null};
 let TOTAL_DIFFS;
@@ -6,13 +7,13 @@ let TOTAL_DIFFS;
 (function() {
 	let opts = [UPLOAD_FILE];
 	for(let [appKey, app] of _.entries(CONFIG)) {
+		opts.push('-');
 		opts.push(..._.keys(app.envs).map(x => appKey + ' - ' + x));
+		opts.push(appKey + ' - ' + LOCAL_URL);
 	}
 	setOptions($('#env1'), opts);
 	setOptions($('#env2'), opts);
 }());
-
-var ENV1, ENV2;
 
 function $(sel) {
 	return document.querySelector(sel);
@@ -24,11 +25,13 @@ function $$(sel) {
 
 function setenv(k) {
 	var fileInput = $('#file' + k);
+	var urlInput = $('#url' + k);
 
 	showStatus(k, '');
 	setaggs(k, null);
 	hide($('#save'+k));
 	hide(fileInput);
+	hide(urlInput);
 	hide($('#refresh_button'));
 	fileInput.value = '';
 
@@ -38,21 +41,32 @@ function setenv(k) {
 	}
 
 	var isFile = appenv === UPLOAD_FILE;
+	var isUrl = appenv.includes(LOCAL_URL);
 
-	if(!isFile) {
-		showStatus(k, 'Loading...');
-		let [app, env] = appenv.split(' - ');
-		PROMISES[k] = getagg(app, env).then(aggs => {
-			setaggs(k, aggs);
-			showStatus(k, 'OK');
-			show($('#save'+k));
-		}, err => {
-			showStatus(k, String(err));
-		});
-	} else {
+	if(isFile) {
 		show(fileInput);
 		fileInput.click();
+	} else if(isUrl) {
+		show(urlInput);
+		if(urlInput.value) {
+			load_agg(k);
+		}
+	} else {
+		load_agg(k);
 	}
+}
+
+function load_agg(k) {
+	showStatus(k, 'Loading...');
+	var appenv = $('#env' + k).value;
+	let [app, env] = appenv.split(' - ');
+	PROMISES[k] = getagg(app, env).then(aggs => {
+		setaggs(k, aggs);
+		showStatus(k, 'OK');
+		show($('#save'+k));
+	}, err => {
+		showStatus(k, String(err));
+	});
 }
 
 function upload(k) {
@@ -98,20 +112,34 @@ function comp() {
 }
 
 function getagg(app, env) {
-	let isLocal = _.startsWith(_.lowerCase(env), 'loc');
-	let reqBody = CONFIG[app].requestBody;
-	if(isLocal) {
-		reqBody = reqBody.request;
-	}
-	return esRequest(CONFIG[app].envs[env], reqBody).then(resp => {
-		var aggs = {};
-		let results = isLocal ? resp : resp.Results;
-		for(let [key, agg] of Object.entries(results.aggregations)) {
-			aggs[key] = {};
-			agg.buckets.forEach(b => aggs[key][b.key] = b.doc_count);
+	let isUrl = env === LOCAL_URL;
+
+	return Promise.all(_.map(CONFIG[app].indexes, (aggDef, type) => {
+		let request = {
+			"aggs": _.mapValues(aggDef, field => ({
+				"terms": {"order": {"_term": "asc"}, "size": 99999, "field": field}
+			}))
+		};
+
+		if(!isUrl) {
+			request = {
+				"context": {"index": "dev", "type": type},
+				"request": request
+			};
 		}
-		return aggs;
-	});
+
+		return esRequest(CONFIG[app].envs[env], request).then(resp => {
+			var aggs = {};
+			let results = isUrl ? resp : resp.Results;
+			for(let [key, agg] of Object.entries(results.aggregations)) {
+				let name = type + ': ' + key;
+				aggs[name] = {};
+				agg.buckets.forEach(b => aggs[name][b.key] = b.doc_count);
+			}
+			return aggs;
+		});
+
+	})).then(allAggs => _.merge.apply(_, allAggs));
 }
 
 function esRequest(url, body) {
@@ -124,8 +152,7 @@ function esRequest(url, body) {
 	}).then(resp => {
 		if(!resp.ok) {
 			throw Error(resp.statusText);
-		}
-		return resp.json();
+		}		return resp.json();
 	}); 
 }
 
@@ -208,8 +235,15 @@ function setOptions(select, options) {
 	options.forEach(opt => select.appendChild(buildOption(opt, opt)));
 }
 
-function buildOption(key, val) {
-	return el('option', val, {value: key});
+function buildOption(val, text) {
+	if(val === '-') {
+		text = '──────────';
+	}
+	let opt = el('option', text, {value: val});
+	if(val === '-') {
+		opt.disabled = true;
+	}
+	return opt;
 }
 
 function empty(el) {
@@ -217,7 +251,7 @@ function empty(el) {
 }
 
 function readAggFile(file) {
-	return new Promise((resolve, reject) => {
+	return new Promise((resolve) => {
 		let reader = new FileReader();
 		reader.onload = () => resolve(reader.result);
 		reader.readAsText(file);

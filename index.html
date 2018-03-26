@@ -1,9 +1,10 @@
-<!doctype>
+<!doctype html>
 <html>
 
 <head>
+	<meta charset="utf-8">
 	<title>ALSI HB Compare</title>
-	<link rel="stylesheet" href="alsi.css"></link>
+	<link rel="stylesheet" href="alsi.css">
 </head>
 
 <body>
@@ -15,6 +16,7 @@
 				Old Env:
 				<select id="env1" onchange="setenv(1)"></select>
 				<input id="file1" type="file" onchange="upload(1)" class="hidden">
+				<input id="url1" type="text" onchange="load_from_url(1)" class="hidden" placeholder="http://172.16.122.80:9200/ols" size="30">
 				<span id="status1" class="status"></span>
 				<button id="save1" class="hidden left-margin" onclick="saveFile(1)">Save file...</button>
 			</div>
@@ -23,6 +25,7 @@
 				New Env:
 				<select id="env2" onchange="setenv(2)"></select>
 				<input id="file2" type="file" onchange="upload(2)" class="hidden">
+				<input id="url2" type="text" onchange="load_from_url(2)" class="hidden" placeholder="http://172.16.122.80:9200/ols" size="30">
 				<span id="status2" class="status"></span>
 				<button id="save2" class="hidden left-margin" onclick="saveFile(2)">Save file...</button>
 			</div>
