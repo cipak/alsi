@@ -60,7 +60,7 @@ function load_agg(k) {
 	showStatus(k, 'Loading...');
 	var appenv = $('#env' + k).value;
 	let [app, env] = appenv.split(' - ');
-	PROMISES[k] = getagg(app, env).then(aggs => {
+	PROMISES[k] = getagg(app, env, $('#url' + k).value).then(aggs => {
 		setaggs(k, aggs);
 		showStatus(k, 'OK');
 		show($('#save'+k));
@@ -84,7 +84,7 @@ function upload(k) {
 	});
 }
 
-function comp() {	
+function comp() {
 	showStatus(3, 'Comparing...');
 	empty($('#aggs'));
 
@@ -111,7 +111,7 @@ function comp() {
 	});
 }
 
-function getagg(app, env) {
+function getagg(app, env, localUrl) {
 	let isUrl = env === LOCAL_URL;
 
 	return Promise.all(_.map(CONFIG[app].indexes, (aggDef, type) => {
@@ -128,7 +128,9 @@ function getagg(app, env) {
 			};
 		}
 
-		return esRequest(CONFIG[app].envs[env], request).then(resp => {
+		let url = isUrl ? (localUrl + '/' + type + '/_search') : CONFIG[app].envs[env];
+
+		return esRequest(url, request).then(resp => {
 			var aggs = {};
 			let results = isUrl ? resp : resp.Results;
 			for(let [key, agg] of Object.entries(results.aggregations)) {
@@ -153,7 +155,7 @@ function esRequest(url, body) {
 		if(!resp.ok) {
 			throw Error(resp.statusText);
 		}		return resp.json();
-	}); 
+	});
 }
 
 function showAgg(aggKey, agg1, agg2) {
@@ -164,7 +166,7 @@ function showAgg(aggKey, agg1, agg2) {
 	var keys1 = _.keys(agg1);
 	var keys2 = _.keys(agg2);
 	var allkeys = _.union(keys1, keys2);
-	
+
 	tab.appendChild(buildRow('=== COUNT ===', keys1.length, keys2.length));
 	tab.appendChild(buildRow('=== TOTAL ===', calcTotal(agg1), calcTotal(agg2)));
 	allkeys.forEach(key => tab.appendChild(buildRow(key, agg1[key], agg2[key])));
