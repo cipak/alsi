@@ -17,6 +17,16 @@ body {
 .logo {
 	font-family: "Comic Sans MS", cursive, sans-serif;
 	font-size: 30px;
+	position: relative;
+}
+
+.logo .version {
+	font-size: 8pt;
+	position: absolute;
+	width: 100%;
+	text-align: center;
+	color: #777;
+	margin-top: -5px;
 }
 
 .aggs {
