@@ -3,6 +3,7 @@ const LOCAL_URL = 'Local url...';
 let AGGS = {1: null, 2: null};
 let PROMISES = {1: null, 2: null};
 let TOTAL_DIFFS;
+let LOCAL_URLS = {};
 
 (function () {
     let opts = [UPLOAD_FILE];
@@ -10,6 +11,7 @@ let TOTAL_DIFFS;
         opts.push('-');
         opts.push(..._.keys(app.envs).map(x => appKey + ' - ' + x));
         opts.push(appKey + ' - ' + LOCAL_URL);
+        LOCAL_URLS[appKey] = 'http://localhost:9200/' + appKey.toLowerCase();
     }
     setOptions($('#env1'), opts);
     setOptions($('#env2'), opts);
@@ -40,6 +42,8 @@ function setenv(k) {
         return;
     }
 
+    let [app] = appenv.split(' - ');
+
     var isFile = appenv === UPLOAD_FILE;
     var isUrl = appenv.includes(LOCAL_URL);
 
@@ -47,6 +51,7 @@ function setenv(k) {
         show(fileInput);
         fileInput.click();
     } else if (isUrl) {
+        urlInput.value = LOCAL_URLS[app];
         show(urlInput);
         if (urlInput.value) {
             load_agg(k);
@@ -82,6 +87,14 @@ function upload(k) {
             throw(e);
         }
     });
+}
+
+
+function update_local_url(k) {
+    var appenv = $('#env' + k).value;
+    let [app] = appenv.split(' - ');
+    LOCAL_URLS[app] = $('#url' + k).value;
+    load_agg(k);
 }
 
 function comp() {
