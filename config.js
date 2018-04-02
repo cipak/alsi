@@ -6,6 +6,7 @@ CONFIG = {
             "UAT":  "https://search-api-dcg-ols.p2p-trials-uat.cwscloud.net/api/v1/search/",
             "PROD": "https://search-api-dcg-ols.p2p-trials.cwscloud.net/api/v1/search/"
         },
+        "localUrl": "http://localhost:9200/ols",
         "indexes": {
             "bundle-detail": {
                 "Device ID":     "services.Mobile.device.id",
@@ -30,6 +31,7 @@ CONFIG = {
             "UAT":  "https://search-api-webhelp-voda.p2p-trials-uat.cwscloud.net/api/v1/search/",
             "PROD": "https://search-api-webhelp-voda.p2p-trials.cwscloud.net/api/v1/search/"
         },
+        "localUrl": "http://localhost:9200/webhelp",
         "indexes": {
             "bundle-detail": {
                 "Device ID":     "services.Mobile.device.id",
@@ -50,6 +52,7 @@ CONFIG = {
             "UAT": "https://search-api-cap-dcp.p2p-trials-uat.cwscloud.net/api/v1/search/",
             "PROD": "https://search-api-cap-dcp.p2p-trials.cwscloud.net/api/v1/search/"
         },
+        "localUrl": "http://localhost:9200/preston",
         "indexes": {
             "bundle-detail": {
                 "Device ID (no colour)":      "services.Mobile.device.id",
@@ -72,6 +75,7 @@ CONFIG = {
             "UAT": "https://search-api-cap-o2.p2p-trials-uat.cwscloud.net/api/v1/search/",
             "PROD": "https://search-api-cap-o2.p2p-trials.cwscloud.net/api/v1/search/"
         },
+        "localUrl": "http://localhost:9200/o2",
         "indexes": {
             "bundle-detail": {
                 "Device ID":      "services.Mobile.device.id",

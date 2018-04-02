@@ -11,7 +11,7 @@ let LOCAL_URLS = {};
         opts.push('-');
         opts.push(..._.keys(app.envs).map(x => appKey + ' - ' + x));
         opts.push(appKey + ' - ' + LOCAL_URL);
-        LOCAL_URLS[appKey] = 'http://localhost:9200/' + appKey.toLowerCase();
+        LOCAL_URLS[appKey] = app.localUrl;
     }
     setOptions($('#env1'), opts);
     setOptions($('#env2'), opts);
